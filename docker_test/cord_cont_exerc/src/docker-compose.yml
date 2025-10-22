@@ -1,0 +1,23 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: dockerfile-back
+    container_name: backend
+    ports:
+      - 4000:4000
+    networks:
+      - net-webacademy
+  
+  frontend:
+    build:
+      context: .
+      dockerfile: dockerfile-front
+    container_name: frontend
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+    networks:
+      - net-webacademy
+    

@@ -1,0 +1,34 @@
+services:
+  dbcontainer:
+    container_name: dbcontainer
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=pass2025
+    ports:
+      - 3306:3306
+    volumes:
+      - vol_mysql:/var/lib/mysql
+    networks:
+      - rede_webacademy
+  
+  dbguicontainer:
+    container_name: dbguicontainer
+    image: phpmyadmin:latest
+    environment:
+      - PMA_HOST=dbcontainer
+      - PMA_PORT=3306
+      - PMA_USER=root
+      - PMA_PASSWORD=pass2025
+    depends_on:
+      - dbcontainer
+    ports:
+      - 8080:80
+    networks:
+      - rede_webacademy
+
+networks:
+  rede_webacademy:
+    driver: bridge
+
+volumes:
+  vol_mysql:
