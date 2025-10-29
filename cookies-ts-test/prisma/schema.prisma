@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client"
+  output   = "../src/generated"
 }
 
 datasource db {
@@ -13,19 +14,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Product {
+  id           String         @id @default(uuid()) @db.Char(36)
+  name         String         @unique @db.VarChar(255)
+  price        Decimal        @db.Decimal(10, 2)
+  stock        Int            @db.Int()
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  PurchaseItem PurchaseItem[]
+}
+
 model User {
-  id         String   @id @default(uuid()) @db.Char(36)
-  name       String   @db.VarChar(100)
-  email      String   @unique @db.VarChar(100)
-  password   String   @db.Char(60)
-  userTypeId String   @db.Char(36)
-  userType   UserType @relation(fields: [userTypeId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id         String     @id @default(uuid()) @db.Char(36)
+  email      String     @unique @db.VarChar(255)
+  password   String     @db.VarChar(255)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  userType   UserType   @relation(fields: [userTypeId], references: [id])
+  userTypeId String
+  Purchase   Purchase[]
 }
 
 model UserType {
-  id    String @id @default(uuid()) @db.Char(36)
-  label String @db.VarChar(10)
-  User  User[]
+  id        String   @id @default(uuid()) @db.Char(36)
+  label     String   @unique @db.VarChar(45)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User[]
+}
+
+model Purchase {
+  id           String         @id @default(uuid()) @db.Char(36)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  user         User           @relation(fields: [userId], references: [id])
+  userId       String
+  PurchaseItem PurchaseItem[]
+}
+
+model PurchaseItem {
+  id         String   @id @default(uuid()) @db.Char(36)
+  quantity   Int      @db.Int()
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  purchase   Purchase @relation(fields: [purchaseId], references: [id])
+  purchaseId String
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  String
 }

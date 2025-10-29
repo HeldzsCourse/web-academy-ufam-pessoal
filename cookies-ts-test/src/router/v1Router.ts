@@ -3,6 +3,11 @@ import { Router } from "express";
 
 const router = Router();
 
-router.use("/products", productsRouter);
+router.use(
+  "/products",
+  // #swagger.tags = ['Products']
+
+  productsRouter
+);
 
 export default router;
